@@ -1,34 +1,62 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_cursor_plugin_example/core/domain/failures/use_case_result.dart';
+import 'package:flutter_cursor_plugin_example/core/domain/use_cases/base_use_case.dart';
 import 'package:flutter_cursor_plugin_example/features/auth/domain/auth_failure.dart';
 import 'package:flutter_cursor_plugin_example/features/auth/domain/auth_repository.dart';
+import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/load_biometric_capabilities_use_case.dart';
+import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/sign_in_with_biometric_use_case.dart';
+import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/sign_in_with_password_use_case.dart';
 import 'package:flutter_cursor_plugin_example/features/auth/presentation/bloc/login_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
-class _MockAuthRepository extends Mock implements AuthRepository {}
+class _MockLoadBiometricCapabilitiesUseCase extends Mock
+    implements LoadBiometricCapabilitiesUseCase {}
+
+class _MockSignInWithPasswordUseCase extends Mock
+    implements SignInWithPasswordUseCase {}
+
+class _MockSignInWithBiometricUseCase extends Mock
+    implements SignInWithBiometricUseCase {}
 
 void main() {
-  late _MockAuthRepository repository;
+  late _MockLoadBiometricCapabilitiesUseCase loadBiometricCapabilitiesUseCase;
+  late _MockSignInWithPasswordUseCase signInWithPasswordUseCase;
+  late _MockSignInWithBiometricUseCase signInWithBiometricUseCase;
 
   setUpAll(() {
     registerFallbackValue('');
+    registerFallbackValue(
+      const SignInWithPasswordParams(email: 'fallback', password: 'fallback'),
+    );
   });
 
   setUp(() {
-    repository = _MockAuthRepository();
+    loadBiometricCapabilitiesUseCase = _MockLoadBiometricCapabilitiesUseCase();
+    signInWithPasswordUseCase = _MockSignInWithPasswordUseCase();
+    signInWithBiometricUseCase = _MockSignInWithBiometricUseCase();
   });
 
   group('LoginBloc', () {
+    LoginBloc buildBloc() {
+      return LoginBloc(
+        loadBiometricCapabilities: loadBiometricCapabilitiesUseCase,
+        signInWithPassword: signInWithPasswordUseCase,
+        signInWithBiometric: signInWithBiometricUseCase,
+      );
+    }
+
     blocTest<LoginBloc, LoginState>(
       'sets biometricAvailable when device supports biometrics',
       build: () {
-        when(() => repository.loadBiometricCapabilities()).thenAnswer(
-          (_) async => const BiometricCapabilities(
-            isSupported: true,
-            canAuthenticateWithBiometrics: true,
+        when(
+          () => loadBiometricCapabilitiesUseCase(const NoParams()),
+        ).thenAnswer(
+          (_) async => const UseCaseResult.success(
+            BiometricCapabilities(isSupported: true, canAuthenticateWithBiometrics: true),
           ),
         );
-        return LoginBloc(repository);
+        return buildBloc();
       },
       act: (bloc) => bloc.add(const LoginStarted()),
       wait: const Duration(milliseconds: 20),
@@ -37,16 +65,11 @@ void main() {
 
     blocTest<LoginBloc, LoginState>(
       'emits validation error when email is empty',
-      build: () => LoginBloc(repository),
+      build: buildBloc,
       act: (bloc) => bloc.add(const LoginSubmitted()),
       expect: () => [const LoginState(errorMessage: 'Email is required.')],
       verify: (_) {
-        verifyNever(
-          () => repository.signInWithPassword(
-            email: any(named: 'email'),
-            password: any(named: 'password'),
-          ),
-        );
+        verifyNever(() => signInWithPasswordUseCase(any()));
       },
     );
 
@@ -54,13 +77,12 @@ void main() {
       'signs in with password and emits success',
       setUp: () {
         when(
-          () => repository.signInWithPassword(
-            email: 'demo@example.com',
-            password: 'password123',
+          () => signInWithPasswordUseCase(
+            any(),
           ),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => const UseCaseResult.success(null));
       },
-      build: () => LoginBloc(repository),
+      build: buildBloc,
       act: (bloc) => bloc
         ..add(const LoginEmailChanged('demo@example.com'))
         ..add(const LoginPasswordChanged('password123'))
@@ -86,13 +108,12 @@ void main() {
       'emits failure when credentials are invalid',
       setUp: () {
         when(
-          () => repository.signInWithPassword(
-            email: 'wrong@example.com',
-            password: 'wrongpass',
-          ),
-        ).thenThrow(const InvalidCredentialsFailure());
+          () => signInWithPasswordUseCase(any()),
+        ).thenAnswer(
+          (_) async => const UseCaseResult.failure(InvalidCredentialsFailure()),
+        );
       },
-      build: () => LoginBloc(repository),
+      build: buildBloc,
       act: (bloc) => bloc
         ..add(const LoginEmailChanged('wrong@example.com'))
         ..add(const LoginPasswordChanged('wrongpass'))
@@ -118,15 +139,18 @@ void main() {
     blocTest<LoginBloc, LoginState>(
       'biometric success emits success state',
       setUp: () {
-        when(() => repository.loadBiometricCapabilities()).thenAnswer(
-          (_) async => const BiometricCapabilities(
-            isSupported: true,
-            canAuthenticateWithBiometrics: true,
+        when(
+          () => loadBiometricCapabilitiesUseCase(const NoParams()),
+        ).thenAnswer(
+          (_) async => const UseCaseResult.success(
+            BiometricCapabilities(isSupported: true, canAuthenticateWithBiometrics: true),
           ),
         );
-        when(() => repository.signInWithBiometric()).thenAnswer((_) async {});
+        when(
+          () => signInWithBiometricUseCase(const NoParams()),
+        ).thenAnswer((_) async => const UseCaseResult.success(null));
       },
-      build: () => LoginBloc(repository),
+      build: buildBloc,
       act: (bloc) => bloc
         ..add(const LoginStarted())
         ..add(const LoginBiometricRequested()),

@@ -1,13 +1,23 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_cursor_plugin_example/features/auth/domain/auth_failure.dart';
-import 'package:flutter_cursor_plugin_example/features/auth/domain/auth_repository.dart';
+import 'package:flutter_cursor_plugin_example/core/domain/failures/use_case_result.dart';
+import 'package:flutter_cursor_plugin_example/core/domain/use_cases/base_use_case.dart';
+import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/load_biometric_capabilities_use_case.dart';
+import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/sign_in_with_biometric_use_case.dart';
+import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/sign_in_with_password_use_case.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc(this._authRepository) : super(const LoginState()) {
+  LoginBloc({
+    required LoadBiometricCapabilitiesUseCase loadBiometricCapabilities,
+    required SignInWithPasswordUseCase signInWithPassword,
+    required SignInWithBiometricUseCase signInWithBiometric,
+  }) : _loadBiometricCapabilities = loadBiometricCapabilities,
+       _signInWithPassword = signInWithPassword,
+       _signInWithBiometric = signInWithBiometric,
+       super(const LoginState()) {
     on<LoginStarted>(_onStarted);
     on<LoginEmailChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
@@ -15,18 +25,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LoginBiometricRequested>(_onBiometricRequested);
   }
 
-  final AuthRepository _authRepository;
+  final LoadBiometricCapabilitiesUseCase _loadBiometricCapabilities;
+  final SignInWithPasswordUseCase _signInWithPassword;
+  final SignInWithBiometricUseCase _signInWithBiometric;
 
   Future<void> _onStarted(LoginStarted event, Emitter<LoginState> emit) async {
-    try {
-      final caps = await _authRepository.loadBiometricCapabilities();
+    final result = await _loadBiometricCapabilities(const NoParams());
+    if (result.isSuccess && result.data != null) {
+      final caps = result.data!;
       emit(
         state.copyWith(
           biometricAvailable: caps.canAuthenticateWithBiometrics,
           clearErrorMessage: true,
         ),
       );
-    } catch (_) {
+    } else {
       emit(state.copyWith(biometricAvailable: false));
     }
   }
@@ -67,27 +80,22 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(
       state.copyWith(status: LoginFormStatus.loading, clearErrorMessage: true),
     );
-    try {
-      await _authRepository.signInWithPassword(
+    final result = await _signInWithPassword(
+      SignInWithPasswordParams(
         email: state.email.trim(),
         password: state.password,
-      );
+      ),
+    );
+    if (result.isSuccess) {
       emit(state.copyWith(status: LoginFormStatus.success));
-    } on AuthFailure catch (e) {
-      emit(
-        state.copyWith(
-          status: LoginFormStatus.failure,
-          errorMessage: e.message,
-        ),
-      );
-    } catch (_) {
-      emit(
-        state.copyWith(
-          status: LoginFormStatus.failure,
-          errorMessage: 'Something went wrong. Try again.',
-        ),
-      );
+      return;
     }
+    emit(
+      state.copyWith(
+        status: LoginFormStatus.failure,
+        errorMessage: _mapFailureMessage(result),
+      ),
+    );
   }
 
   Future<void> _onBiometricRequested(
@@ -97,24 +105,25 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(
       state.copyWith(status: LoginFormStatus.loading, clearErrorMessage: true),
     );
-    try {
-      await _authRepository.signInWithBiometric();
+    final result = await _signInWithBiometric(const NoParams());
+    if (result.isSuccess) {
       emit(state.copyWith(status: LoginFormStatus.success));
-    } on AuthFailure catch (e) {
-      emit(
-        state.copyWith(
-          status: LoginFormStatus.failure,
-          errorMessage: e.message,
-        ),
-      );
-    } catch (_) {
-      emit(
-        state.copyWith(
-          status: LoginFormStatus.failure,
-          errorMessage: 'Something went wrong. Try again.',
-        ),
-      );
+      return;
     }
+    emit(
+      state.copyWith(
+        status: LoginFormStatus.failure,
+        errorMessage: _mapFailureMessage(result),
+      ),
+    );
+  }
+
+  String _mapFailureMessage(UseCaseResult<void> result) {
+    final message = result.failure?.message;
+    if (message == null || message.isEmpty) {
+      return 'Something went wrong. Try again.';
+    }
+    return message;
   }
 
   String? _validateFields(String email, String password) {

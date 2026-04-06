@@ -1,30 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cursor_plugin_example/features/auth/domain/auth_repository.dart';
+import 'package:flutter_cursor_plugin_example/app/di/service_locator.dart';
+import 'package:flutter_cursor_plugin_example/core/domain/use_cases/base_use_case.dart';
+import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/sign_out_use_case.dart';
 import 'package:flutter_cursor_plugin_example/features/auth/presentation/login_page.dart';
-import 'package:flutter_cursor_plugin_example/features/counter/domain/counter_repository.dart';
 
 /// Confirms sign-out, then clears the navigation stack back to [LoginPage].
 class LogoutPage extends StatelessWidget {
-  const LogoutPage({
-    super.key,
-    required this.authRepository,
-    required this.counterRepository,
-  });
+  const LogoutPage({super.key, this.signOutUseCase});
 
-  final AuthRepository authRepository;
-  final CounterRepository counterRepository;
+  final SignOutUseCase? signOutUseCase;
 
   Future<void> _onConfirm(BuildContext context) async {
-    await authRepository.signOut();
+    await (signOutUseCase ?? sl<SignOutUseCase>())(const NoParams());
     if (!context.mounted) {
       return;
     }
     await Navigator.of(context).pushAndRemoveUntil<void>(
       MaterialPageRoute<void>(
-        builder: (_) => LoginPage(
-          authRepository: authRepository,
-          counterRepository: counterRepository,
-        ),
+        builder: (_) => const LoginPage(),
       ),
       (_) => false,
     );

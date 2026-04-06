@@ -1,27 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_cursor_plugin_example/features/auth/domain/auth_repository.dart';
+import 'package:flutter_cursor_plugin_example/app/di/service_locator.dart';
+import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/load_biometric_capabilities_use_case.dart';
+import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/sign_in_with_biometric_use_case.dart';
+import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/sign_in_with_password_use_case.dart';
 import 'package:flutter_cursor_plugin_example/features/auth/presentation/bloc/login_bloc.dart';
-import 'package:flutter_cursor_plugin_example/features/counter/domain/counter_repository.dart';
+import 'package:flutter_cursor_plugin_example/features/counter/domain/use_cases/get_current_count_use_case.dart';
+import 'package:flutter_cursor_plugin_example/features/counter/domain/use_cases/increment_counter_use_case.dart';
 import 'package:flutter_cursor_plugin_example/features/counter/presentation/counter_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({
     super.key,
-    required this.authRepository,
-    required this.counterRepository,
+    this.loadBiometricCapabilitiesUseCase,
+    this.signInWithPasswordUseCase,
+    this.signInWithBiometricUseCase,
+    this.getCurrentCountUseCase,
+    this.incrementCounterUseCase,
   });
 
-  final AuthRepository authRepository;
-  final CounterRepository counterRepository;
+  final LoadBiometricCapabilitiesUseCase? loadBiometricCapabilitiesUseCase;
+  final SignInWithPasswordUseCase? signInWithPasswordUseCase;
+  final SignInWithBiometricUseCase? signInWithBiometricUseCase;
+  final GetCurrentCountUseCase? getCurrentCountUseCase;
+  final IncrementCounterUseCase? incrementCounterUseCase;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => LoginBloc(authRepository)..add(const LoginStarted()),
+      create: (_) => LoginBloc(
+        loadBiometricCapabilities:
+            loadBiometricCapabilitiesUseCase ?? sl<LoadBiometricCapabilitiesUseCase>(),
+        signInWithPassword:
+            signInWithPasswordUseCase ?? sl<SignInWithPasswordUseCase>(),
+        signInWithBiometric:
+            signInWithBiometricUseCase ?? sl<SignInWithBiometricUseCase>(),
+      )..add(const LoginStarted()),
       child: _LoginScaffold(
-        authRepository: authRepository,
-        counterRepository: counterRepository,
+        getCurrentCountUseCase: getCurrentCountUseCase,
+        incrementCounterUseCase: incrementCounterUseCase,
       ),
     );
   }
@@ -29,12 +46,12 @@ class LoginPage extends StatelessWidget {
 
 class _LoginScaffold extends StatefulWidget {
   const _LoginScaffold({
-    required this.authRepository,
-    required this.counterRepository,
+    this.getCurrentCountUseCase,
+    this.incrementCounterUseCase,
   });
 
-  final AuthRepository authRepository;
-  final CounterRepository counterRepository;
+  final GetCurrentCountUseCase? getCurrentCountUseCase;
+  final IncrementCounterUseCase? incrementCounterUseCase;
 
   @override
   State<_LoginScaffold> createState() => _LoginScaffoldState();
@@ -55,8 +72,8 @@ class _LoginScaffoldState extends State<_LoginScaffold> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
         builder: (_) => CounterPage(
-          authRepository: widget.authRepository,
-          counterRepository: widget.counterRepository,
+          getCurrentCountUseCase: widget.getCurrentCountUseCase,
+          incrementCounterUseCase: widget.incrementCounterUseCase,
         ),
       ),
     );

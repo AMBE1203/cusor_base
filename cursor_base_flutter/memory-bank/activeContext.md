@@ -2,18 +2,16 @@
 
 ## Mode
 
-**PLAN** — use-case layer (clean architecture) fully specified.
+Idle / ready for new task.
 
 ## Current focus
 
-- **Auth:** 4 use cases under `domain/use_cases/`; **Counter:** 2 use cases.
-- **Presentation** switches from repositories to use cases; **`main`** is composition root.
-- Details: **`memory-bank/tasks.md`**.
+- No active implementation task.
+- Previous task has been archived.
 
 ## Next
 
-- **`/build`** to implement phases 1–7.
-- No **`/creative`** required for this refactor.
+- Start next task with `/van`.
 
 ## Platform
 

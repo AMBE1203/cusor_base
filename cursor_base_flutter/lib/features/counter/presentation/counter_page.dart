@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cursor_plugin_example/features/auth/domain/auth_repository.dart';
+import 'package:flutter_cursor_plugin_example/app/di/service_locator.dart';
 import 'package:flutter_cursor_plugin_example/features/auth/presentation/logout_page.dart';
-import 'package:flutter_cursor_plugin_example/features/counter/domain/counter_repository.dart';
+import 'package:flutter_cursor_plugin_example/features/counter/domain/use_cases/get_current_count_use_case.dart';
+import 'package:flutter_cursor_plugin_example/features/counter/domain/use_cases/increment_counter_use_case.dart';
 import 'package:flutter_cursor_plugin_example/features/counter/presentation/counter_controller.dart';
 
 class CounterPage extends StatefulWidget {
   const CounterPage({
     super.key,
-    required this.authRepository,
-    required this.counterRepository,
+    this.getCurrentCountUseCase,
+    this.incrementCounterUseCase,
   });
 
-  final AuthRepository authRepository;
-  final CounterRepository counterRepository;
+  final GetCurrentCountUseCase? getCurrentCountUseCase;
+  final IncrementCounterUseCase? incrementCounterUseCase;
 
   @override
   State<CounterPage> createState() => _CounterPageState();
@@ -24,7 +25,11 @@ class _CounterPageState extends State<CounterPage> {
   @override
   void initState() {
     super.initState();
-    _controller = CounterController(repository: widget.counterRepository);
+    _controller = CounterController(
+      getCurrentCount: widget.getCurrentCountUseCase ?? sl<GetCurrentCountUseCase>(),
+      incrementCounter:
+          widget.incrementCounterUseCase ?? sl<IncrementCounterUseCase>(),
+    );
     _controller.load();
   }
 
@@ -46,8 +51,7 @@ class _CounterPageState extends State<CounterPage> {
               Navigator.of(context).push<void>(
                 MaterialPageRoute<void>(
                   builder: (_) => LogoutPage(
-                    authRepository: widget.authRepository,
-                    counterRepository: widget.counterRepository,
+                    
                   ),
                 ),
               );

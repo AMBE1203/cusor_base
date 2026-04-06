@@ -21,33 +21,33 @@ Load: .cursor/rules/isolation_rules/main.mdc
 Load: .cursor/rules/isolation_rules/Core/memory-bank-paths.mdc
 Load: .cursor/rules/isolation_rules/Core/command-execution.mdc
 
-text### Step 2: Load BUILD Mode Map
+### Step 2: Load BUILD Mode Map
 Load: .cursor/rules/isolation_rules/visual-maps/build-mode-map.mdc
 
-text### Step 3: Load Complexity-Specific Implementation Rules
+### Step 3: Load Complexity-Specific Implementation Rules
 Based on complexity level from `memory-bank/tasks.md`:
 
 **Level 1:**
 Load: .cursor/rules/isolation_rules/Level1/workflow-level1.mdc
 Load: .cursor/rules/isolation_rules/Level1/optimized-workflow-level1.mdc
 
-text**Level 2:**
+**Level 2:**
 Load: .cursor/rules/isolation_rules/Level2/workflow-level2.mdc
 
-text**Level 3-4:**
+**Level 3-4:**
 Load: .cursor/rules/isolation_rules/Level3/implementation-intermediate.mdc
 Load: .cursor/rules/isolation_rules/Level4/phased-implementation.mdc
 
-text### Step 4: Load Flutter Plugin Rules + Official Rules
+### Step 4: Load Flutter Plugin Rules + Official Rules
 Load: .cursor/rules/flutter-plugin-policy-priority.mdc
 Load: .cursor/rules/flutter-development-best-practices.mdc
 Load: .cursor/rules/flutter-test-best-practices.mdc
 Load: .cursor/rules/dart-effective-dart.mdc
 
-text**Official Flutter AI Rules (Required):**
+**Official Flutter AI Rules (Required):**
 Load: .cursor/rules/flutter-official-ai-rules.mdc
 
-text## Workflow
+## Workflow
 
 1. **Verify Prerequisites & Official Rules Sync Gate**
    - Check `memory-bank/tasks.md` for planning completion
@@ -64,7 +64,7 @@ sync-official-flutter-ai-rules
 After the sync completes successfully, run /build again.
 Workflow is paused until official rules are synced.
 
-textDo not continue with any implementation steps.
+Do not continue with any implementation steps.
 
 2. **Strict Plugin-Only Enforcement (Highest Priority)**
 **YOU ARE IN PLUGIN-ONLY MODE.**
@@ -83,13 +83,13 @@ Analyze the current task in `memory-bank/tasks.md`, then:
 - For features or changes:
 implement-flutter-feature [detailed feature description extracted from tasks.md]
 
-text- If the task involves Figma:
+- If the task involves Figma:
 implement-figma-screen [screen name or Figma node ID]
 
-text- Immediately after implementation:
+- Immediately after implementation:
 generate-flutter-tests [feature name or affected files]
 
-text- For complex tasks (Level 3-4):
+- For complex tasks (Level 3-4):
 Break into phases and apply `implement-flutter-feature` for each phase.
 
 4. **Test-Driven Phase Completion**
@@ -99,10 +99,12 @@ Break into phases and apply `implement-flutter-feature` for each phase.
 
 5. **Final Review and Security Check (Always at the End)**
 review-flutter-code
-
+Then run the dedicated security review:
 security-review
 
-textAddress any issues found before completing the build.
+- Analyze the output of both reviews.
+- Fix any critical issues found.
+- Only mark the build as complete after both reviews are done and issues are resolved.
 
 6. **Update Memory Bank**
 - Document all plugin commands that were executed
@@ -122,6 +124,8 @@ You may also use: `/build [specific feature description]`
 After successful build, suggest running `/reflect` for structured reflection.
 
 **Important Notes:**
+- Every /build must end with calling `review-flutter-code` and `security-review`.
+- Never finish /build without explicitly calling these two review commands.
 - Always call plugin commands **without** the leading `/`.
 - Manual code editing is **strictly forbidden** in this /build command.
 - This setup enforces production-grade Flutter development using the plugin.

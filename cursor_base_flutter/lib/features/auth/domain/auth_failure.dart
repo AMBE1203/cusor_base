@@ -1,10 +1,7 @@
-sealed class AuthFailure implements Exception {
-  const AuthFailure(this.message);
+import 'package:flutter_cursor_plugin_example/core/domain/failures/failure.dart';
 
-  final String message;
-
-  @override
-  String toString() => message;
+sealed class AuthFailure extends Failure {
+  const AuthFailure(super.message);
 }
 
 final class InvalidCredentialsFailure extends AuthFailure {
