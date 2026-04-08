@@ -4,7 +4,34 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="514502b4-aa76-4931-b017-2ebc6147337b" name="Changes" comment="" />
+    <list default="true" id="514502b4-aa76-4931-b017-2ebc6147337b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/android/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/android/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/ios/Runner/Info.plist" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/ios/Runner/Info.plist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/app/di/service_locator.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/app/di/service_locator.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/data/auth_repository_impl.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/data/auth_repository_impl.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/data/biometric_auth_gateway.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/domain/auth_failure.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/domain/auth_failure.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/domain/auth_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/domain/auth_repository.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/domain/use_cases/load_biometric_capabilities_use_case.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/domain/use_cases/sign_in_with_biometric_use_case.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/bloc/login_bloc.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/bloc/login_bloc.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/bloc/login_event.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/bloc/login_event.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/bloc/login_state.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/bloc/login_state.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/login_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/login_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/activeContext.md" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/activeContext.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/progress.md" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/progress.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/tasks.md" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/tasks.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/techContext.md" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/techContext.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/test/features/auth/domain/auth_use_cases_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/test/features/auth/domain/auth_use_cases_test.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/test/features/auth/login_bloc_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/test/features/auth/login_bloc_test.dart" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -22,12 +49,12 @@
     &quot;assignee&quot;: &quot;vnext-cuongdt&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/AMBE1203/cusor_base.git",
-    "accountId": "ff524cdf-3a16-447c-b764-90ee0dc260a3"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/AMBE1203/cusor_base.git&quot;,
+    &quot;accountId&quot;: &quot;ff524cdf-3a16-447c-b764-90ee0dc260a3&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -53,6 +80,19 @@
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
 }</component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="cursor_base" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="cursor_base" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="514502b4-aa76-4931-b017-2ebc6147337b" name="Changes" comment="" />

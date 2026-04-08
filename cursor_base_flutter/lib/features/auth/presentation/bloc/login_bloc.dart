@@ -1,54 +1,31 @@
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:flutter_cursor_plugin_example/core/domain/failures/use_case_result.dart';
-import 'package:flutter_cursor_plugin_example/core/domain/use_cases/base_use_case.dart';
-import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/load_biometric_capabilities_use_case.dart';
-import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/sign_in_with_biometric_use_case.dart';
+import 'package:flutter_cursor_plugin_example/core/presentation/bloc/base_bloc.dart';
 import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/sign_in_with_password_use_case.dart';
+
+export 'package:flutter_cursor_plugin_example/core/presentation/bloc/base_state.dart'
+    show ViewStatus;
 
 part 'login_event.dart';
 part 'login_state.dart';
 
-class LoginBloc extends Bloc<LoginEvent, LoginState> {
+class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
   LoginBloc({
-    required LoadBiometricCapabilitiesUseCase loadBiometricCapabilities,
     required SignInWithPasswordUseCase signInWithPassword,
-    required SignInWithBiometricUseCase signInWithBiometric,
-  }) : _loadBiometricCapabilities = loadBiometricCapabilities,
-       _signInWithPassword = signInWithPassword,
-       _signInWithBiometric = signInWithBiometric,
+  }) : _signInWithPassword = signInWithPassword,
        super(const LoginState()) {
-    on<LoginStarted>(_onStarted);
     on<LoginEmailChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
     on<LoginSubmitted>(_onSubmitted);
-    on<LoginBiometricRequested>(_onBiometricRequested);
   }
 
-  final LoadBiometricCapabilitiesUseCase _loadBiometricCapabilities;
   final SignInWithPasswordUseCase _signInWithPassword;
-  final SignInWithBiometricUseCase _signInWithBiometric;
-
-  Future<void> _onStarted(LoginStarted event, Emitter<LoginState> emit) async {
-    final result = await _loadBiometricCapabilities(const NoParams());
-    if (result.isSuccess && result.data != null) {
-      final caps = result.data!;
-      emit(
-        state.copyWith(
-          biometricAvailable: caps.canAuthenticateWithBiometrics,
-          clearErrorMessage: true,
-        ),
-      );
-    } else {
-      emit(state.copyWith(biometricAvailable: false));
-    }
-  }
 
   void _onEmailChanged(LoginEmailChanged event, Emitter<LoginState> emit) {
     emit(
       state.copyWith(
         email: event.email,
-        status: LoginFormStatus.initial,
+        status: ViewStatus.initial,
         clearErrorMessage: true,
       ),
     );
@@ -61,7 +38,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(
       state.copyWith(
         password: event.password,
-        status: LoginFormStatus.initial,
+        status: ViewStatus.initial,
         clearErrorMessage: true,
       ),
     );
@@ -78,7 +55,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
 
     emit(
-      state.copyWith(status: LoginFormStatus.loading, clearErrorMessage: true),
+      state.copyWith(status: ViewStatus.loading, clearErrorMessage: true),
     );
     final result = await _signInWithPassword(
       SignInWithPasswordParams(
@@ -87,32 +64,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       ),
     );
     if (result.isSuccess) {
-      emit(state.copyWith(status: LoginFormStatus.success));
+      emit(state.copyWith(status: ViewStatus.success));
       return;
     }
     emit(
       state.copyWith(
-        status: LoginFormStatus.failure,
-        errorMessage: _mapFailureMessage(result),
-      ),
-    );
-  }
-
-  Future<void> _onBiometricRequested(
-    LoginBiometricRequested event,
-    Emitter<LoginState> emit,
-  ) async {
-    emit(
-      state.copyWith(status: LoginFormStatus.loading, clearErrorMessage: true),
-    );
-    final result = await _signInWithBiometric(const NoParams());
-    if (result.isSuccess) {
-      emit(state.copyWith(status: LoginFormStatus.success));
-      return;
-    }
-    emit(
-      state.copyWith(
-        status: LoginFormStatus.failure,
+        status: ViewStatus.failure,
         errorMessage: _mapFailureMessage(result),
       ),
     );

@@ -28,6 +28,28 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        manifestPlaceholders["appName"] = "Cursor Base (Dev)"
+    }
+
+    flavorDimensions += "env"
+    productFlavors {
+        create("dev") {
+            dimension = "env"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+            manifestPlaceholders["appName"] = "Cursor Base (Dev)"
+        }
+        create("stg") {
+            dimension = "env"
+            applicationIdSuffix = ".stg"
+            versionNameSuffix = "-stg"
+            manifestPlaceholders["appName"] = "Cursor Base (Stg)"
+        }
+        create("prod") {
+            dimension = "env"
+            manifestPlaceholders["appName"] = "Cursor Base"
+        }
     }
 
     buildTypes {

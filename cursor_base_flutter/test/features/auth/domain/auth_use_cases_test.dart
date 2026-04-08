@@ -2,8 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_cursor_plugin_example/core/domain/failures/use_case_result.dart';
 import 'package:flutter_cursor_plugin_example/core/domain/use_cases/base_use_case.dart';
 import 'package:flutter_cursor_plugin_example/features/auth/domain/auth_repository.dart';
-import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/load_biometric_capabilities_use_case.dart';
-import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/sign_in_with_biometric_use_case.dart';
 import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/sign_in_with_password_use_case.dart';
 import 'package:flutter_cursor_plugin_example/features/auth/domain/use_cases/sign_out_use_case.dart';
 import 'package:mocktail/mocktail.dart';
@@ -15,23 +13,6 @@ void main() {
 
   setUp(() {
     repository = _MockAuthRepository();
-  });
-
-  test('LoadBiometricCapabilitiesUseCase delegates to repository', () async {
-    const expected = BiometricCapabilities(
-      isSupported: true,
-      canAuthenticateWithBiometrics: true,
-    );
-    when(() => repository.loadBiometricCapabilities()).thenAnswer(
-      (_) async => expected,
-    );
-
-    final useCase = LoadBiometricCapabilitiesUseCase(repository);
-    final actual = await useCase(const NoParams());
-
-    expect(actual.isSuccess, isTrue);
-    expect(actual.data, expected);
-    verify(() => repository.loadBiometricCapabilities()).called(1);
   });
 
   test('SignInWithPasswordUseCase delegates to repository', () async {
@@ -57,16 +38,6 @@ void main() {
         password: 'password123',
       ),
     ).called(1);
-  });
-
-  test('SignInWithBiometricUseCase delegates to repository', () async {
-    when(() => repository.signInWithBiometric()).thenAnswer((_) async {});
-
-    final useCase = SignInWithBiometricUseCase(repository);
-    final result = await useCase(const NoParams());
-
-    expect(result.isSuccess, isTrue);
-    verify(() => repository.signInWithBiometric()).called(1);
   });
 
   test('SignOutUseCase delegates to repository', () async {
@@ -100,4 +71,3 @@ void main() {
     expect(result.failure, isNotNull);
   });
 }
-

@@ -2,17 +2,21 @@
 
 ## Mode
 
-Idle / ready for new task.
+Idle / ready for new task (previous task **archived**).
 
 ## Current focus
 
-- No active implementation task.
-- Previous task has been archived.
+- **Shared status:** `ViewStatus` + `BaseViewState` for consistent loading/error/success semantics across screens.
+- **Adoption:** `LoginState` now extends `BaseViewState`; login flow uses `ViewStatus` in bloc/UI/tests.
 
 ## Next
 
-- Start next task with `/van`.
+- Start next task with **`/van`**.
 
-## Platform
+## Note
 
-- FVM Flutter (`fvm flutter`).
+- Current base primitives now include `BaseViewState` + `ViewStatus` for shared loading/error/success semantics.
+
+## Status
+
+- Archived. Ready for next task.

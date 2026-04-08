@@ -4,7 +4,7 @@
 
 - Flutter (stable, FVM-managed per `.fvmrc`)
 - Dart SDK per `pubspec.yaml` `environment.sdk`
-- **Auth / login (planned):** `flutter_bloc`, `bloc`, `equatable`, `local_auth`; tests: `bloc_test`, `mocktail`
+- **Auth / login:** `flutter_bloc`, `bloc`, `equatable`; tests: `bloc_test`, `mocktail` (password sign-in only; biometric / `local_auth` removed)
 
 ## Validation (local)
 

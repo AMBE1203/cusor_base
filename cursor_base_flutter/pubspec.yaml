@@ -37,7 +37,6 @@ dependencies:
   flutter_bloc: ^9.1.1
   bloc: ^9.2.0
   equatable: ^2.0.8
-  local_auth: ^3.0.1
   get_it: ^8.0.3
   dio: ^5.9.0
 
