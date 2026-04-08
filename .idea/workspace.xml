@@ -5,32 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="514502b4-aa76-4931-b017-2ebc6147337b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/android/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/android/app/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/android/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/ios/Runner/Info.plist" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/ios/Runner/Info.plist" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/app/di/service_locator.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/app/di/service_locator.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/data/auth_repository_impl.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/data/auth_repository_impl.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/data/biometric_auth_gateway.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/domain/auth_failure.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/domain/auth_failure.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/domain/auth_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/domain/auth_repository.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/domain/use_cases/load_biometric_capabilities_use_case.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/domain/use_cases/sign_in_with_biometric_use_case.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/bloc/login_bloc.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/bloc/login_bloc.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/bloc/login_event.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/bloc/login_event.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/bloc/login_state.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/bloc/login_state.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/login_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/features/auth/presentation/login_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/activeContext.md" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/activeContext.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/progress.md" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/progress.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/tasks.md" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/tasks.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/techContext.md" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/memory-bank/techContext.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/test/features/auth/domain/auth_use_cases_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/test/features/auth/domain/auth_use_cases_test.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cursor_base_flutter/test/features/auth/login_bloc_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/cursor_base_flutter/test/features/auth/login_bloc_test.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +43,7 @@
   &quot;keyToString&quot;: {
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
@@ -102,5 +79,16 @@
       <updated>1775198136584</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
