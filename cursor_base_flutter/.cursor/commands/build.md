@@ -17,35 +17,35 @@ Updates:
 ## Progressive Rule Loading
 
 ### Step 1: Load Core Rules
-Load: .cursor/rules/isolation_rules/main.mdc
-Load: .cursor/rules/isolation_rules/Core/memory-bank-paths.mdc
-Load: .cursor/rules/isolation_rules/Core/command-execution.mdc
+- Load: `.cursor/rules/isolation_rules/main.mdc`
+- Load: `.cursor/rules/isolation_rules/Core/memory-bank-paths.mdc`
+- Load: `.cursor/rules/isolation_rules/Core/command-execution.mdc`
 
 ### Step 2: Load BUILD Mode Map
-Load: .cursor/rules/isolation_rules/visual-maps/build-mode-map.mdc
+- Load: `.cursor/rules/isolation_rules/visual-maps/build-mode-map.mdc`
 
 ### Step 3: Load Complexity-Specific Implementation Rules
 Based on complexity level from `memory-bank/tasks.md`:
 
 **Level 1:**
-Load: .cursor/rules/isolation_rules/Level1/workflow-level1.mdc
-Load: .cursor/rules/isolation_rules/Level1/optimized-workflow-level1.mdc
+- Load: `.cursor/rules/isolation_rules/Level1/workflow-level1.mdc`
+- Load: `.cursor/rules/isolation_rules/Level1/optimized-workflow-level1.mdc`
 
 **Level 2:**
-Load: .cursor/rules/isolation_rules/Level2/workflow-level2.mdc
+- Load: `.cursor/rules/isolation_rules/Level2/workflow-level2.mdc`
 
 **Level 3-4:**
-Load: .cursor/rules/isolation_rules/Level3/implementation-intermediate.mdc
-Load: .cursor/rules/isolation_rules/Level4/phased-implementation.mdc
+- Load: `.cursor/rules/isolation_rules/Level3/implementation-intermediate.mdc`
+- Load: `.cursor/rules/isolation_rules/Level4/phased-implementation.mdc`
 
 ### Step 4: Load Flutter Plugin Rules + Official Rules
-Load: .cursor/rules/flutter-plugin-policy-priority.mdc
-Load: .cursor/rules/flutter-development-best-practices.mdc
-Load: .cursor/rules/flutter-test-best-practices.mdc
-Load: .cursor/rules/dart-effective-dart.mdc
+- Load: `.cursor/rules/flutter-plugin-policy-priority.mdc`
+- Load: `.cursor/rules/flutter-development-best-practices.mdc`
+- Load: `.cursor/rules/flutter-test-best-practices.mdc`
+- Load: `.cursor/rules/dart-effective-dart.mdc`
 
 **Official Flutter AI Rules (Required):**
-Load: .cursor/rules/flutter-official-ai-rules.mdc
+- Load: `.cursor/rules/flutter-official-ai-rules.mdc`
 
 ## Workflow
 
