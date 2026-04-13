@@ -1,133 +1,71 @@
 # BUILD Command - Code Implementation (Enhanced with Flutter Cursor Plugin)
 
-This command implements the planned changes using **flutter-cursor-plugin exclusively**. 
-Manual code implementation is strictly prohibited. All Flutter/Dart code changes must be done through plugin commands.
+## Step 0: Read State First (Before Loading Anything)
+Read ONLY these two files first:
+- `memory-bank/tasks.md` → extract: complexity_level, current_phase, plugin_available
+- `memory-bank/activeContext.md` → extract: feature_name, affected_files
 
-## Memory Bank Integration
+Then load rules conditionally based on extracted state.
 
-Reads from:
-- `memory-bank/tasks.md` - Implementation plan and checklists
-- `memory-bank/creative/creative-*.md` - Design decisions (Level 3-4)
-- `memory-bank/activeContext.md` - Current project context
+## Step 1: Load Minimum Core (Always - 3 files max)
+- `isolation_rules/main.mdc`
+- `isolation_rules/Core/command-execution.mdc`
+- `flutter-plugin-policy-priority.mdc`  ← single source of truth for plugin rules
 
-Updates:
-- `memory-bank/tasks.md` - Implementation progress, test results, and status
-- `memory-bank/progress.md` - Build status, test outcomes, and observations
+## Step 2: Load Level-Specific Rules (Conditional - 1-2 files)
+IF complexity == 1: load Level1/workflow-level1.mdc ONLY
+IF complexity == 2: load Level2/workflow-level2.mdc ONLY  
+IF complexity >= 3: load Level3/implementation-intermediate.mdc + phased-implementation.mdc
 
-## Progressive Rule Loading
+## Step 3: Official Rules Gate
+IF flutter-official-ai-rules.mdc missing → STOP, prompt sync.
+IF exists → proceed (do NOT re-read if already in context)
 
-### Step 1: Load Core Rules
-- Load: `.cursor/rules/isolation_rules/main.mdc`
-- Load: `.cursor/rules/isolation_rules/Core/memory-bank-paths.mdc`
-- Load: `.cursor/rules/isolation_rules/Core/command-execution.mdc`
+## Step 4: Resume Check (Critical for Token Saving)
+Read `memory-bank/tasks.md` → check `build_checkpoint` field.
+IF checkpoint exists → skip to that phase, do NOT restart.
+IF no checkpoint → start from phase 1.
 
-### Step 2: Load BUILD Mode Map
-- Load: `.cursor/rules/isolation_rules/visual-maps/build-mode-map.mdc`
+## Step 5: Execute Plugin Commands
 
-### Step 3: Load Complexity-Specific Implementation Rules
-Based on complexity level from `memory-bank/tasks.md`:
+### 5a. Pre-implementation security check (Level 3-4 only)
+security-review --scope=planned-changes
 
-**Level 1:**
-- Load: `.cursor/rules/isolation_rules/Level1/workflow-level1.mdc`
-- Load: `.cursor/rules/isolation_rules/Level1/optimized-workflow-level1.mdc`
+### 5b. Implementation
+implement-flutter-feature [feature from tasks.md]
 
-**Level 2:**
-- Load: `.cursor/rules/isolation_rules/Level2/workflow-level2.mdc`
+### 5c. Immediate test (do not batch)
+generate-flutter-tests [affected files from step 0]
 
-**Level 3-4:**
-- Load: `.cursor/rules/isolation_rules/Level3/implementation-intermediate.mdc`
-- Load: `.cursor/rules/isolation_rules/Level4/phased-implementation.mdc`
+## Step 6: Update Memory Bank (Structured Format)
+Append to tasks.md using EXACTLY this format:
+Build Log - [timestamp]
 
-### Step 4: Load Flutter Plugin Rules + Official Rules
-- Load: `.cursor/rules/flutter-plugin-policy-priority.mdc`
-- Load: `.cursor/rules/flutter-development-best-practices.mdc`
-- Load: `.cursor/rules/flutter-test-best-practices.mdc`
-- Load: `.cursor/rules/dart-effective-dart.mdc`
+phase: [1/2/3]
+plugin_command: [exact command used]
+result: [PASS/FAIL/PARTIAL]
+checkpoint: [next_phase_name]
+issues: [none | list]
 
-**Official Flutter AI Rules (Required):**
-- Load: `.cursor/rules/flutter-official-ai-rules.mdc`
 
-## Workflow
-
-1. **Verify Prerequisites & Official Rules Sync Gate**
-   - Check `memory-bank/tasks.md` for planning completion
-   - For Level 3-4: Verify creative phase documents exist
-   - Confirm that `setup-flutter-environment` has been executed
-
-   **Critical Official Rules Check:**
-   - If `flutter-official-ai-rules.mdc` does not exist or has not been synced:
-STOP WORKFLOW IMMEDIATELY.
-⚠️ CRITICAL: Official Flutter AI Rules have not been synchronized yet.
-This /build command cannot proceed without the latest official Flutter AI rules.
-Please run the following command first:
-sync-official-flutter-ai-rules
-After the sync completes successfully, run /build again.
-Workflow is paused until official rules are synced.
-
-Do not continue with any implementation steps.
-
-2. **Strict Plugin-Only Enforcement (Highest Priority)**
-**YOU ARE IN PLUGIN-ONLY MODE.**
-
-- You **MUST** use flutter-cursor-plugin commands for **all** code implementation, testing, and review.
-- **Never** implement or modify Flutter/Dart code manually.
-- **Never** perform "straight Level 2 code change".
-- If a suitable plugin command exists, you must use it.
-- Always use: `implement-flutter-feature`, `generate-flutter-tests`, `review-flutter-code`, `security-review`, etc.
-- Violating this rule is not allowed in /build phase.
-
-3. **Execute Implementation using Flutter Cursor Plugin**
-
-Analyze the current task in `memory-bank/tasks.md`, then:
-
-- For features or changes:
-implement-flutter-feature [detailed feature description extracted from tasks.md]
-
-- If the task involves Figma:
-implement-figma-screen [screen name or Figma node ID]
-
-- Immediately after implementation:
-generate-flutter-tests [feature name or affected files]
-
-- For complex tasks (Level 3-4):
-Break into phases and apply `implement-flutter-feature` for each phase.
-
-4. **Test-Driven Phase Completion**
-- Ensure all tests generated by the plugin pass
-- Fix failures and re-run tests until they all pass
-- Document results in `memory-bank/tasks.md`
-
-5. **Final Review and Security Check (Always at the End)**
+## Step 7: Final Review (Always)
 review-flutter-code
-Then run the dedicated security review:
 security-review
 
-- Analyze the output of both reviews.
-- Fix any critical issues found.
-- Only mark the build as complete after both reviews are done and issues are resolved.
+Update tasks.md:
 
-6. **Update Memory Bank**
-- Document all plugin commands that were executed
-- Update task status in `memory-bank/tasks.md`
-- Record observations and lessons learned in `memory-bank/progress.md`
+checkpoint: COMPLETE
+build_status: DONE
 
-7. **Final Verification**
-Confirm that only plugin commands were used and all reviews/tests passed.
 
-## Usage
+## Fallback Policy
+IF plugin command fails:
+1. Log failure in tasks.md with above format
+2. Ask user: retry | skip | abort
+3. NEVER fall back to manual coding silently
 
-Type `/build` to execute the current plan using plugin commands only.  
-You may also use: `/build [specific feature description]`
-
-## Next Steps
-
-After successful build, suggest running `/reflect` for structured reflection.
-
-**Important Notes:**
-- Every /build must end with calling `review-flutter-code` and `security-review`.
-- Never finish /build without explicitly calling these two review commands.
-- Always call plugin commands **without** the leading `/`.
-- Manual code editing is **strictly forbidden** in this /build command.
-- This setup enforces production-grade Flutter development using the plugin.
-- The official Flutter AI rules (`sync-official-flutter-ai-rules`) are now **required** before any build can proceed.
-- This ensures the highest code quality and consistency with Flutter official standards.
+## Hard Rules (Always Apply)
+- End EVERY build with: `review-flutter-code` then `security-review` — no exceptions
+- Plugin commands have no leading `/` (correct: `implement-flutter-feature`, not `/implement-flutter-feature`)  
+- Manual Dart/Flutter code edits are forbidden — use plugin or stop and ask user
+- Official rules must be synced before proceeding — if missing, STOP
