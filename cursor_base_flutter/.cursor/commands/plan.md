@@ -1,84 +1,60 @@
 # PLAN Command - Task Planning
 
-This command creates detailed implementation plans based on complexity level determined in VAN mode.
-
 ## Memory Bank Integration
+Reads: `memory-bank/tasks.md` (complexity_level, task description)
+Reads: `memory-bank/activeContext.md`
+Updates: `memory-bank/tasks.md` (implementation plan + phase flags)
 
-Reads from:
-- `memory-bank/tasks.md` - Task requirements and complexity level
-- `memory-bank/activeContext.md` - Current project context
-- `memory-bank/projectbrief.md` - Project foundation (if exists)
+## Rule Loading
+Step 1 (always, 1 file):
+- `isolation_rules/main.mdc`
 
-Updates:
-- `memory-bank/tasks.md` - Adds detailed implementation plan
+Step 2 (conditional, 1-2 files max):
+- L2: `Level2/workflow-level2.mdc`
+- L3: `Level3/planning-comprehensive.mdc`
+- L4: `Level4/architectural-planning.mdc` + `Level4/workflow-level4.mdc`
 
-## Progressive Rule Loading
-
-### Step 1: Load Core Rules
-```
-Load: .cursor/rules/isolation_rules/main.mdc
-Load: .cursor/rules/isolation_rules/Core/memory-bank-paths.mdc
-```
-
-### Step 2: Load PLAN Mode Map
-```
-Load: .cursor/rules/isolation_rules/visual-maps/plan-mode-map.mdc
-```
-
-### Step 3: Load Complexity-Specific Planning Rules
-Based on complexity level from `memory-bank/tasks.md`:
-
-**Level 2:**
-```
-Load: .cursor/rules/isolation_rules/Level2/task-tracking-basic.mdc
-Load: .cursor/rules/isolation_rules/Level2/workflow-level2.mdc
-```
-
-**Level 3:**
-```
-Load: .cursor/rules/isolation_rules/Level3/task-tracking-intermediate.mdc
-Load: .cursor/rules/isolation_rules/Level3/planning-comprehensive.mdc
-Load: .cursor/rules/isolation_rules/Level3/workflow-level3.mdc
-```
-
-**Level 4:**
-```
-Load: .cursor/rules/isolation_rules/Level4/task-tracking-advanced.mdc
-Load: .cursor/rules/isolation_rules/Level4/architectural-planning.mdc
-Load: .cursor/rules/isolation_rules/Level4/workflow-level4.mdc
-```
+DO NOT load: `memory-bank-paths.mdc`, `plan-mode-map.mdc`, task-tracking files
+These are reference docs — AI does not need to read them to create a plan.
 
 ## Workflow
 
-1. **Read Task Context**
-   - Read `memory-bank/tasks.md` to get complexity level
-   - Read `memory-bank/activeContext.md` for current context
-   - Review codebase structure
+### Step 1: Read Context
+Read tasks.md → extract: complexity_level, task description, plugin_available.
+Read activeContext.md → extract: affected_files (if any prior work exists).
 
-2. **Create Implementation Plan**
-   - **Level 2:** Document planned changes, files to modify, implementation steps
-   - **Level 3:** Create comprehensive plan with components, dependencies, challenges
-   - **Level 4:** Create phased implementation plan with architectural considerations
+### Step 2: Scan Codebase (targeted, not broad)
+Look at files directly relevant to the task only.
+Do NOT scan entire project structure — wasteful.
 
-3. **Technology Validation** (Level 2-4)
-   - Document technology stack selection
-   - Create proof of concept if needed
-   - Verify dependencies and build configuration
+### Step 3: Create Plan (write directly to tasks.md)
+Append to tasks.md:
+Implementation Plan
 
-4. **Identify Creative Phases**
-   - Flag components requiring design decisions
-   - Document which components need creative exploration
+phases: [list]
+files_to_modify: [list]
+creative_required: [true/false]
+creative_components: [list if true]
 
-5. **Update Memory Bank**
-   - Update `memory-bank/tasks.md` with complete plan
-   - Mark planning phase as complete
+Checklist
 
-## Usage
+phase 1: ...
+phase 2: ...
 
-Type `/plan` to start planning based on the task in `memory-bank/tasks.md`.
+
+L2: 3-5 checklist items, no phases.
+L3: phases with components, flag creative items.
+L4: phased with architecture notes, flag creative + security items.
+
+### Step 4: Technology Validation (L3-4 only)
+Verify dependencies exist. Note conflicts. Max 5 lines in tasks.md.
+
+## Hard Rules
+- Plan lives in tasks.md — no separate plan file
+- creative_required field is mandatory
+- L2 plan must fit in <20 lines in tasks.md
+- Do not read progress.md at plan phase — not written yet
 
 ## Next Steps
-
-- **If creative phases identified:** Use `/creative` command
-- **If no creative phases:** Proceed to `/build` command
-
+- creative_required: true → /creative
+- creative_required: false → /build

@@ -1,124 +1,67 @@
-# ARCHIVE Command - Task Archiving
-
-This command creates comprehensive archive documentation and updates the Memory Bank for future reference.
+# ARCHIVE Command
 
 ## Memory Bank Integration
+Reads: `memory-bank/tasks.md` (single source — has everything needed)
+Reads: `memory-bank/reflection/reflection-[task_id].md` (L2-4 only)
+Creates: `memory-bank/archive/archive-[task_id].md`
+Updates: `tasks.md`, `activeContext.md`
+Clears: `progress.md`
 
-Reads from:
-- `memory-bank/tasks.md` - Complete task details and checklists
-- `memory-bank/reflection/reflection-[task_id].md` - Reflection document
-- `memory-bank/progress.md` - Implementation status
-- `memory-bank/creative/creative-*.md` - Creative phase documents (Level 3-4)
-
-Creates:
-- `memory-bank/archive/archive-[task_id].md` - Archive document
-
-Updates:
-- `memory-bank/tasks.md` - Mark task as COMPLETE
-- `memory-bank/progress.md` - Add archive reference
-- `memory-bank/activeContext.md` - Reset for next task
-
-## Progressive Rule Loading
-
-### Step 1: Load Core Rules
-```
-Load: .cursor/rules/isolation_rules/main.mdc
-Load: .cursor/rules/isolation_rules/Core/memory-bank-paths.mdc
-```
-
-### Step 2: Load ARCHIVE Mode Map
-```
-Load: .cursor/rules/isolation_rules/visual-maps/archive-mode-map.mdc
-```
-
-### Step 3: Load Complexity-Specific Archive Rules
-Based on complexity level from `memory-bank/tasks.md`:
-
-**Level 1:**
-```
-Load: .cursor/rules/isolation_rules/Level1/quick-documentation.mdc
-```
-
-**Level 2:**
-```
-Load: .cursor/rules/isolation_rules/Level2/archive-basic.mdc
-```
-
-**Level 3:**
-```
-Load: .cursor/rules/isolation_rules/Level3/archive-intermediate.mdc
-```
-
-**Level 4:**
-```
-Load: .cursor/rules/isolation_rules/Level4/archive-comprehensive.mdc
-```
+## Rule Loading
+Step 1: `isolation_rules/main.mdc` only
+NO level-specific rules — archive is documentation, not logic.
 
 ## Workflow
 
-1. **Verify Reflection Complete**
-   - Check that `memory-bank/reflection/reflection-[task_id].md` exists
-   - Verify reflection is complete
-   - If not complete, return to `/reflect` command
+### Gate Check
+Verify in tasks.md:
+- `reflection_status: COMPLETE`
 
-2. **Create Archive Document**
+IF fails → redirect to /reflect.
 
-   **Level 1:**
-   - Create quick summary
-   - Update `memory-bank/tasks.md` marking task complete
+### Level 1: Minimal Archive (no archive file)
+Append to tasks.md then done:
+archive_status: COMPLETE
+archived_at: [date]
 
-   **Level 2:**
-   - Create basic archive document
-   - Document changes made
-   - Update `memory-bank/tasks.md` and `memory-bank/progress.md`
+Reset activeContext.md: clear current task fields.
+**Total token cost: ~200 tokens.**
 
-   **Level 3-4:**
-   - Create comprehensive archive document
-   - Include: Metadata, Summary, Requirements, Implementation details, Testing, Lessons Learned, References
-   - Archive creative phase documents
-   - Document code changes
-   - Document testing approach
-   - Summarize lessons learned
-   - Update all Memory Bank files
+### Level 2: Compact Archive File
+Create `archive-[task_id].md` with ONLY:
+[task_id] | [feature_name] | L2 | [date]
+What was built
+[2-3 lines]
+Key decision
+[1-2 lines]
+Reuse note
+[1 line — what future tasks can copy from this]
 
-3. **Archive Document Structure**
-   ```
-   # TASK ARCHIVE: [Task Name]
-   
-   ## METADATA
-   - Task ID, dates, complexity level
-   
-   ## SUMMARY
-   Brief overview of the task
-   
-   ## REQUIREMENTS
-   What the task needed to accomplish
-   
-   ## IMPLEMENTATION
-   How the task was implemented
-   
-   ## TESTING
-   How the solution was verified
-   
-   ## LESSONS LEARNED
-   Key takeaways from the task
-   
-   ## REFERENCES
-   Links to related documents (reflection, creative phases, etc.)
-   ```
+### Level 3-4: Standard Archive File
+[task_id] | [feature_name] | L[n] | [date]
+Summary
+[3-5 lines]
+Implementation
+[Plugin commands used, architecture decisions]
+Test Results
+[From build_log — pass/fail counts]
+Lessons → Reuse
+[Top 3 only, each 1-2 lines]
+Refs
 
-4. **Update Memory Bank**
-   - Create `memory-bank/archive/archive-[task_id].md`
-   - Mark task as COMPLETE in `memory-bank/tasks.md`
-   - Update `memory-bank/progress.md` with archive reference
-   - Reset `memory-bank/activeContext.md` for next task
-   - Clear completed task details from `memory-bank/tasks.md` (keep structure)
+reflection: reflection-[task_id].md
+creative: creative-[feature].md (L3-4)
 
-## Usage
 
-Type `/archive` to archive the completed task after reflection is done.
+### Update Memory Bank (always, all levels)
+tasks.md:     task_status: COMPLETE, archive_status: COMPLETE
+activeContext.md: reset all fields to empty/ready
+progress.md:  clear completed task data, keep file structure
 
-## Next Steps
+## Hard Rules
+- NO loading creative files unless L3-4 AND archive needs specific design rationale
+- Archive file max: L2=1 page, L3=2 pages, L4=3 pages
+- Do NOT rewrite what's already in reflection — just reference it
+- L1 never creates an archive file
 
-After archiving complete, use `/van` command to start the next task.
-
+## Next Step → /van (next task)

@@ -1,91 +1,62 @@
 # CREATIVE Command - Design Decisions
 
-This command performs structured design exploration for components flagged during planning.
-
 ## Memory Bank Integration
+Reads: `memory-bank/tasks.md` (creative_components list)
+Creates: `memory-bank/creative/creative-[feature].md` (1 file per component)
+Updates: `memory-bank/tasks.md` (design decisions)
 
-Reads from:
-- `memory-bank/tasks.md` - Components requiring creative phases
-- `memory-bank/activeContext.md` - Current project context
+## Rule Loading
+Step 1 (always, 1 file):
+- `isolation_rules/main.mdc`
 
-Creates:
-- `memory-bank/creative/creative-[feature_name].md` - Design decision documents
+Step 2 (load only when first creative component starts, 1 file):
+- `isolation_rules/Core/creative-phase-enforcement.mdc`
 
-Updates:
-- `memory-bank/tasks.md` - Records design decisions
+Step 3 (lazy — load only for matching component type, 1 file):
+- Architecture → `CreativePhase/creative-phase-architecture.mdc`
+- UI/UX → `CreativePhase/creative-phase-uiux.mdc`
+- Algorithm → `CreativePhase/creative-phase-algorithm.mdc`
 
-## Progressive Rule Loading
-
-### Step 1: Load Core Rules
-```
-Load: .cursor/rules/isolation_rules/main.mdc
-Load: .cursor/rules/isolation_rules/Core/memory-bank-paths.mdc
-```
-
-### Step 2: Load CREATIVE Mode Map
-```
-Load: .cursor/rules/isolation_rules/visual-maps/creative-mode-map.mdc
-```
-
-### Step 3: Load Creative Phase Enforcement
-```
-Load: .cursor/rules/isolation_rules/Core/creative-phase-enforcement.mdc
-Load: .cursor/rules/isolation_rules/Core/creative-phase-metrics.mdc
-```
-
-### Step 4: Load Specialized Creative Rules (Lazy Loaded)
-Load only when specific creative phase type is needed:
-
-**For Architecture Design:**
-```
-Load: .cursor/rules/isolation_rules/Phases/CreativePhase/creative-phase-architecture.mdc
-```
-
-**For UI/UX Design:**
-```
-Load: .cursor/rules/isolation_rules/Phases/CreativePhase/creative-phase-uiux.mdc
-```
-
-**For Algorithm Design:**
-```
-Load: .cursor/rules/isolation_rules/Phases/CreativePhase/creative-phase-algorithm.mdc
-```
+DO NOT load: `creative-phase-metrics.mdc`, `creative-mode-map.mdc`, `memory-bank-paths.mdc`
 
 ## Workflow
 
-1. **Verify Planning Complete**
-   - Check `memory-bank/tasks.md` for planning completion
-   - Verify creative phases are identified
-   - If not complete, return to `/plan` command
+### Gate Check
+Read tasks.md → verify `creative_required: true` and `creative_components` list exists.
+IF missing → STOP, redirect to /plan.
 
-2. **Identify Creative Phases**
-   - Read components flagged for creative work from `memory-bank/tasks.md`
-   - Prioritize components for design exploration
+### For Each Component (sequential, not parallel)
+Load the matching Step 3 rule file ONLY when processing that component.
 
-3. **Execute Creative Phase**
-   For each component:
-   - **🎨🎨🎨 ENTERING CREATIVE PHASE: [TYPE]**
-   - Define requirements and constraints
-   - Generate 2-4 design options
-   - Analyze pros/cons of each option
-   - Select and justify recommended approach
-   - Document implementation guidelines
-   - Verify solution meets requirements
-   - **🎨🎨🎨 EXITING CREATIVE PHASE**
+**🎨 ENTERING CREATIVE PHASE: [type] — [component name]**
 
-4. **Document Decisions**
-   - Create `memory-bank/creative/creative-[feature_name].md`
-   - Update `memory-bank/tasks.md` with design decisions
+1. State requirements (3-5 bullet points from tasks.md)
+2. Generate options (2-3 max — not 4, cognitive overhead not worth it for L3)
+3. For each option: name + pros (2) + cons (2) — table format
+4. Select + justify in 2-3 lines
+5. Write implementation guidelines (5 bullet points max)
 
-5. **Verify Completion**
-   - Ensure all flagged components have completed creative phases
-   - Mark creative phase as complete in `memory-bank/tasks.md`
+**🎨 EXITING CREATIVE PHASE**
 
-## Usage
+Write to `creative-[component].md`:
+Creative: [component] | [type] | [date]
+Decision: [option chosen]
+[2-line rationale]
+Implementation Guidelines
 
-Type `/creative` to start creative design work for components flagged in the plan.
+[5 bullet points max]
 
-## Next Steps
+Options Considered
+OptionProConA......B......
 
-After all creative phases complete, proceed to `/build` command for implementation.
+Update tasks.md: mark component as `creative_done: true`.
 
+### After All Components Complete
+Update tasks.md: `creative_status: COMPLETE`
+
+## Hard Rules
+- Max 2-3 options per component — more is analysis paralysis, not quality
+- creative file max 1 page
+- Unload previous component's rule file before loading next (if different type)
+
+## Next Steps → /build

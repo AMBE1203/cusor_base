@@ -1,7 +1,7 @@
 #!/bin/bash
 # ================================================
 # Script tích hợp Cursor Memory Bank + Flutter Cursor Plugin
-# + Copy file flutter_build.md vào build.mdc
+# Chỉ copy 4 rule quan trọng + copy flutter_build.md vào build.mdc
 # ================================================
 
 set -e
@@ -14,42 +14,47 @@ MEMORY_BANK_REPO="https://github.com/vanzan01/cursor-memory-bank.git"
 PLUGIN_REPO="https://github.com/Wreos/flutter-cursor-plugin.git"
 
 # ===================== CONFIG =====================
-# Đường dẫn đến file flutter_build.md của bạn
-FLUTTER_BUILD_MD_PATH="./flutter_build.md"     # ← Bạn có thể thay đổi đường dẫn này
+FLUTTER_BUILD_MD_PATH="./flutter_build.md"     # Đường dẫn đến file flutter_build.md của bạn
 
 echo "📍 Project hiện tại: $PROJECT_DIR"
 
 # ===================== 1. Kiểm tra file flutter_build.md =====================
 if [ ! -f "$FLUTTER_BUILD_MD_PATH" ]; then
   echo "❌ Không tìm thấy file flutter_build.md tại: $FLUTTER_BUILD_MD_PATH"
-  echo "Vui lòng kiểm tra lại đường dẫn hoặc đặt file flutter_build.md vào thư mục gốc project."
+  echo "Vui lòng đặt file flutter_build.md vào thư mục gốc project hoặc chỉnh sửa đường dẫn."
   exit 1
 fi
 
 echo "✅ Đã tìm thấy file flutter_build.md"
 
 # ===================== 2. Tích hợp flutter-cursor-plugin =====================
-echo "🔌 Đang cài đặt và copy flutter-cursor-plugin..."
+echo "🔌 Đang cài đặt flutter-cursor-plugin..."
 
 if [ ! -d "$PLUGIN_LOCAL_PATH" ]; then
   echo "📥 Clone flutter-cursor-plugin..."
   mkdir -p "$HOME/.cursor/plugins/local"
   git clone "$PLUGIN_REPO" "$PLUGIN_LOCAL_PATH"
 else
-  echo "✅ Plugin đã tồn tại"
+  echo "✅ Plugin đã tồn tại tại $PLUGIN_LOCAL_PATH"
 fi
 
-# Copy files từ plugin
+# ===================== 3. Copy chỉ 4 rule quan trọng =====================
+echo "📋 Copy 4 rule quan trọng từ plugin vào .cursor/rules/..."
+
+mkdir -p .cursor/rules
+
+cp "$PLUGIN_LOCAL_PATH/rules/dart-effective-dart.mdc" .cursor/rules/ 2>/dev/null || true
+cp "$PLUGIN_LOCAL_PATH/rules/flutter-development-best-practices.mdc" .cursor/rules/ 2>/dev/null || true
+cp "$PLUGIN_LOCAL_PATH/rules/flutter-plugin-policy-priority.mdc" .cursor/rules/ 2>/dev/null || true
+cp "$PLUGIN_LOCAL_PATH/rules/flutter-test-best-practices.mdc" .cursor/rules/ 2>/dev/null || true
+
+echo "✅ Đã copy 4 rule quan trọng: dart-effective-dart, flutter-development-best-practices, flutter-plugin-policy-priority, flutter-test-best-practices"
+
+# ===================== 4. Tạo mcp.json cho FVM =====================
+echo "⚙️ Tạo file .cursor/mcp.json..."
+
 mkdir -p .cursor
-cp -r "$PLUGIN_LOCAL_PATH/rules/" .cursor/ 2>/dev/null || true
-cp -r "$PLUGIN_LOCAL_PATH/commands/" .cursor/ 2>/dev/null || true
-cp -r "$PLUGIN_LOCAL_PATH/skills/" .cursor/ 2>/dev/null || true
 
-cp "$PLUGIN_LOCAL_PATH/mcp.json" .cursor/mcp.json 2>/dev/null || true
-
-echo "✅ Đã copy files từ flutter-cursor-plugin"
-
-# ===================== 3. Tạo mcp.json cho FVM =====================
 cat > .cursor/mcp.json << EOF
 {
   "mcpServers": {
@@ -65,8 +70,11 @@ cat > .cursor/mcp.json << EOF
 }
 EOF
 
-# ===================== 4. Tích hợp Cursor Memory Bank =====================
+echo "✅ Đã tạo .cursor/mcp.json"
+
+# ===================== 5. Tích hợp Cursor Memory Bank =====================
 echo "🧠 Tích hợp Cursor Memory Bank..."
+
 git clone "$MEMORY_BANK_REPO" temp-memory
 
 cp -r temp-memory/.cursor/* .cursor/ 2>/dev/null || true
@@ -75,35 +83,40 @@ mkdir -p memory-bank
 cp -r temp-memory/memory-bank/* memory-bank/ 2>/dev/null || true
 
 rm -rf temp-memory
-echo "✅ Đã tích hợp Memory Bank"
+echo "✅ Đã tích hợp Cursor Memory Bank"
 
-# ===================== 5. Copy flutter_build.md vào build.mdc =====================
-echo "📄 Đang copy nội dung flutter_build.md vào .cursor/commands/build.mdc ..."
+# ===================== 6. Copy flutter_build.md vào build.mdc =====================
+echo "📄 Copy nội dung flutter_build.md vào .cursor/commands/build.md ..."
 
 mkdir -p .cursor/commands
 
-# Copy và đổi tên thành build.mdc
-cp "$FLUTTER_BUILD_MD_PATH" .cursor/commands/build.mdc
+# Xóa file build.mdc cũ nếu tồn tại để tránh lỗi ghi đè
+if [ -f ".cursor/commands/build.md" ]; then
+  echo "🗑️  Đang xóa file build.md cũ..."
+  rm -f ".cursor/commands/build.md"
+fi
 
-echo "✅ Đã thay thế nội dung .cursor/commands/build.mdc từ file flutter_build.md"
+cp "$FLUTTER_BUILD_MD_PATH" .cursor/commands/build.md
 
-# ===================== 6. Hoàn tất =====================
+echo "✅ Đã thay thế file .cursor/commands/build.md"
+
+# ===================== 7. Hoàn tất =====================
 echo ""
 echo "========================================"
-echo "🎉 HOÀN TẤT TÍCH HỢP TOÀN BỘ!"
+echo "🎉 HOÀN TẤT TÍCH HỢP!"
 echo "========================================"
 echo ""
 echo "Đã thực hiện:"
 echo "   • Cài flutter-cursor-plugin"
+echo "   • Copy 4 rule quan trọng"
 echo "   • Tích hợp Cursor Memory Bank"
-echo "   • Copy nội dung flutter_build.md vào build.mdc"
+echo "   • Copy flutter_build.md → build.mdc"
 echo "   • Tạo mcp.json cho FVM"
 echo ""
 echo "Các bước tiếp theo:"
 echo "1. Restart Cursor hoàn toàn"
-echo "2. Mở project trong Cursor"
-echo "3. Chạy: setup-flutter-environment"
-echo "4. Chạy: list available flutter commands"
-echo "5. Chạy: /van"
+echo "2. Chạy: setup-flutter-environment"
+echo "3. Chạy: list available flutter commands"
+echo "4. Chạy: /van"
 echo ""
 echo "Chúc bạn phát triển hiệu quả! 💪"
