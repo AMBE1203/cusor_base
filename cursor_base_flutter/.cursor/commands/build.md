@@ -1,121 +1,132 @@
-# BUILD Command - Code Implementation (Enhanced with Flutter Cursor Plugin)
+# VAN Command - Initialization & Entry Point
+
+## Memory Bank Integration
+Reads: `memory-bank/tasks.md` (if exists)
+Updates: `memory-bank/tasks.md`, `memory-bank/activeContext.md`
+
+## Rule Loading
+Step 1 (always, 4 files):
+```
+Load: .cursor/rules/isolation_rules/main.mdc
+Load: .cursor/rules/isolation_rules/Core/memory-bank-paths.mdc
+Load: .cursor/rules/isolation_rules/Core/platform-awareness.mdc
+Load: .cursor/rules/isolation_rules/Core/file-verification.mdc
+```
+
+### Step 2: Load VAN Mode Map
+```
+Load: .cursor/rules/isolation_rules/visual-maps/van_mode_split/van-mode-map.mdc
+```
 
 
-## Step 0: Read State First (Before Loading Anything)
-Read ONLY these two files first:
-- `memory-bank/tasks.md` → extract: complexity_level, current_phase, plugin_available
-- `memory-bank/activeContext.md` → extract: feature_name, affected_files
+### Step 3 (conditional after complexity determined):
+- L1 only: `Level1/workflow-level1.mdc`
+- L2-4: skip — /plan handles its own rules
 
-Then load rules conditionally based on extracted state.
+DO NOT load: `memory-bank-paths.mdc`, `file-verification.mdc`, `van-mode-map.mdc`
+These cost tokens and provide no routing value at VAN phase.
 
-## Step 1: Load Minimum Core (Always - 3 files max)
-- `isolation_rules/main.mdc`
-- `isolation_rules/Core/command-execution.mdc`
-- `flutter-plugin-policy-priority.mdc`  ← single source of truth for plugin rules
+### Step 4 (if is first time):
+## AUTO PROJECT DISCOVERY (EXECUTION)
 
-## Step 1b: Load Flutter Quality Rules (Always - 4 files, no exception)
-- `flutter-official-ai-rules.mdc`        ← deprecated API prevention
-- `dart-effective-dart.mdc`              ← code style enforcement
-- `flutter-development-best-practices.mdc` ← performance + memory safety
-- `flutter-test-best-practices.mdc`      ← test quality gate
+When ALL conditions below are true:
+- memory-bank/ directory exists
+- At least one of the following files is empty:
+  - projectbrief.md
+  - productContext.md
+  - systemPatterns.md
+  - techContext.md
 
+THEN perform the following actions:
 
-## Step 2: Load Level-Specific Rules (Conditional - 1-2 files)
-IF complexity == 1: load Level1/workflow-level1.mdc ONLY
-IF complexity == 2: load Level2/workflow-level2.mdc ONLY  
-IF complexity >= 3: load Level3/implementation-intermediate.mdc + phased-implementation.mdc
+### 1. Analyze Project Codebase
+- Explore repository structure
+- Identify entry points (main.dart, index.js, etc.)
+- Read key files:
+  - pubspec.yaml
+  - package.json
+  - README.md
+  - build.gradle (if exists)
 
-## Step 3: Official Rules Gate
-IF flutter-official-ai-rules.mdc missing → STOP, prompt sync.
-IF exists → proceed (do NOT re-read if already in context)
+### 2. Infer Project Information
+Determine:
+- Project purpose
+- Core features
+- Technology stack
+- Architecture patterns
+- Key modules and structure
 
-## Step 4: Resume Check (Critical for Token Saving)
-Read `memory-bank/tasks.md` → check `build_checkpoint` field.
-IF checkpoint exists → skip to that phase, do NOT restart.
-IF no checkpoint → start from phase 1.
+### 3. Populate Memory Bank Files
 
-## Step 5: Execute Plugin Commands
+For each file below, if it is empty → write content:
 
-### 5a. Pre-implementation security check (Level 3-4 only)
-Execute skill: `skills/security-audit/SKILL.md`
-Scope: planned changes from tasks.md only.
-Write findings to tasks.md build_log before proceeding.
+#### memory-bank/projectbrief.md
+Write:
+- Project overview
+- Main goals
+- Scope
 
-### 5b. Implementation
-Execute the correct skill based on tasks.md state:
+#### memory-bank/productContext.md
+Write:
+- Target users
+- Use cases
+- Product behavior
 
-IF figma_node_id OR figma_url exists:
-→ Execute: `skills/build-flutter-features/figma-to-flutter.md`
-→ Use Figma MCP to fetch design spec
-→ Implement UI from Figma output
-IF Figma MCP unavailable → STOP.
-Tell user: "Figma MCP not configured.
-See docs/figma-mcp-setup.md or remove figma_node_id to implement from plan."
+#### memory-bank/systemPatterns.md
+Write:
+- Architecture pattern
+- Module structure
+- Design decisions
 
-ELSE:
-→ Execute: `skills/build-flutter-features/SKILL.md`
-→ Implement feature from tasks.md plan
+#### memory-bank/techContext.md
+Write:
+- Languages
+- Frameworks
+- Libraries
+- Constraints
 
-### 5c. Immediate test (do not batch)
-Execute skill: `skills/write-flutter-tests/SKILL.md`
-Scope: affected_files extracted in Step 0.
-Run immediately after 5b — do not defer.
-Do not batch — run immediately after implementation.
+### STRICT RULES:
+- Do NOT overwrite non-empty files
+- Do NOT guess — only use evidence from code
+- If unknown → write "Unknown"
+- Keep output concise and structured
 
-### Test Result Reporting (Required)
-After execution, AI MUST report:
+## Workflow
 
-- total_test_cases: [number]
-- passed: [number]
-- failed: [number]
+### Step 1: Platform Detection
+Detect OS → set path separator → store in activeContext.md (1 line).
 
-### Evaluation Rule
-- IF failed > 0 → mark test_result: FAIL
-- ELSE → mark test_result: PASS
+### Step 2: Memory Bank Check
+IF `memory-bank/` missing → create structure with empty files.
+IF exists → read `tasks.md` only (skip other files).
 
+### Step 3: Plugin Availability Check (Flutter projects)
+IF `.cursor/rules/flutter-plugin-policy-priority.mdc` exists:
+- Check flutter-cursor-plugin available
+- Store: `plugin_available: true/false` in tasks.md
+- IF false → warn user before proceeding
 
-## Step 6: Update Memory Bank (Structured Format)
-Append to tasks.md using EXACTLY this format:
-Build Log - [timestamp]
+### Step 4: Complexity Determination
+Analyze task → assign L1/L2/L3/L4.
+Write to tasks.md:
+Task: [name]
 
-phase: [1/2/3]
-plugin_command: [exact command used]
-result: [PASS/FAIL/PARTIAL]
-checkpoint: [next_phase_name]
-issues: [none | list]
-
-
-## Step 7: Final Review (Always — Both Required)
-
-Execute in order:
-1. `skills/review-flutter-code/SKILL.md`
-2. `skills/security-audit/SKILL.md`
-
-### Evaluation Rule
-- IF any issue, error, or fail case is reported from either step → mark:
-  security-review: FAIL
-- ELSE (no issues found) → mark:
-  security-review: PASS
-
-Update tasks.md:
-
-checkpoint: COMPLETE
-build_status: DONE
-security-review: [PASS/FAIL based on evaluation]
+complexity: L[n]
+plugin_available: [true/false]
+build_checkpoint: pending
+reflection_status: pending
+archive_status: pending
 
 
-## Fallback Policy
-IF plugin command fails:
-1. Log failure in tasks.md with above format
-2. Ask user: retry | skip | abort
-3. NEVER fall back to manual coding silently
+### Step 5: Route
+- L1 → load `Level1/workflow-level1.mdc` → proceed to /build directly
+- L2-4 → stop here, tell user to run /plan
 
-## Hard Rules (Always Apply)
-- All implementation via skill files — no ad-hoc code generation
-- Dart MCP is for validation only — not code generation
-- Figma MCP only when figma_node_id or figma_url present in tasks.md
-- Skills are executed directly — never call commands from within build.md
-- Both Step 7 reviews are mandatory — skipping either is not allowed
-- Manual code editing is **strictly forbidden** in this /build command.
-- Manual Dart/Flutter code edits are forbidden — use plugin or stop and ask user
-- Official rules must be synced before proceeding — if missing, STOP
+## Hard Rules
+- Never load level rules for L2-4 at VAN phase — /plan owns that
+- plugin_available check is mandatory for Flutter projects
+- Total files loaded: max 3 (main + platform + L1 workflow if needed)
+
+## Next Steps
+- L1 → /build
+- L2-4 → /plan
