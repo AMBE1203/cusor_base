@@ -7,6 +7,18 @@ Read ONLY these two files first:
 
 Then load rules conditionally based on extracted state.
 
+## Step 0b: GitNexus Build-Time Verification  
+
+### 0b-1. Detect changes since plan  
+Call: `detect_changes({scope: "all"})`  
+IF changed_symbols intersects blast_radius (from tasks.md) → re-run impact()  
+IF no intersection → proceed, plan still valid  
+
+### 0b-2. Scope gate  
+Call: `query({query: "<feature_name>"})`  
+files_to_read = query result only.  
+Do NOT read files outside this list.  
+
 ## Step 1: Load Minimum Core (Always - 3 files max)
 - `isolation_rules/main.mdc`
 - `isolation_rules/Core/command-execution.mdc`
