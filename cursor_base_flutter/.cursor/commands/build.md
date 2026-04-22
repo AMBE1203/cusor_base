@@ -46,6 +46,22 @@ Scope: planned changes from tasks.md only.
 Write findings to tasks.md build_log before proceeding.  
 
 ### 5b. Implementation  
+
+### 5b-pre. Impact Gate (Required before any symbol edit)  
+For each symbol in files_to_modify:  
+  Call: `impact({target: "<symbol>", direction: "upstream"})`  
+  Report to user:  
+    - direct callers (Depth 1)  
+    - affected processes  
+    - risk level  
+
+  IF risk_level == HIGH or CRITICAL:  
+    → STOP and warn user:  
+    "⚠️ High impact detected on <symbol>.  
+     <N> direct callers, affects <processes>.  
+     Proceed with edits? [yes / no]"  
+    WAIT for confirmation before continuing.  
+
 Note: Codex will review your output once you are done"  
 Execute the correct skill based on tasks.md state:  
 
@@ -91,6 +107,11 @@ issues: [none | list]
 
 
 ## Step 7: Final Review (Always — Both Required)  
+
+### 7-pre. Change Verification  
+Call: `detect_changes({scope: "all"})`  
+IF changed_symbols exceeds files_to_modify list → flag as scope drift, report to user.  
+
 
 Execute in order:  
 1. `skills/review-flutter-code/SKILL.md`  
