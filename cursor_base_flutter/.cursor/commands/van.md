@@ -1,73 +1,152 @@
-# VAN Command - Initialization & Entry Point
-
-This command initializes the Memory Bank system, performs platform detection, determines task complexity, and routes to appropriate workflows.
+# PLAN Command - Task Planning
 
 ## Memory Bank Integration
+Reads: `memory-bank/tasks.md` (complexity_level, task description)
+Reads: `memory-bank/activeContext.md`
+Updates: `memory-bank/tasks.md` (implementation plan + phase flags)
 
-**CRITICAL:** All Memory Bank files are located in `memory-bank/` directory:
-- `memory-bank/tasks.md` - Source of truth for task tracking
-- `memory-bank/activeContext.md` - Current focus
-- `memory-bank/progress.md` - Implementation status
-- `memory-bank/projectbrief.md` - Project foundation
+## Rule Loading
+### Step 1 (always, 1 file):
+- `isolation_rules/main.mdc`
 
-## Progressive Rule Loading
+### Step 2 (conditional, 1-2 files max):
+- L2: `Level2/workflow-level2.mdc`
+- L3: `Level3/planning-comprehensive.mdc`
+- L4: `Level4/architectural-planning.mdc` + `Level4/workflow-level4.mdc`
 
-This command loads rules progressively to optimize context usage:
+DO NOT load: `memory-bank-paths.mdc`, `plan-mode-map.mdc`, task-tracking files
+These are reference docs — AI does not need to read them to create a plan.
 
-### Step 1: Load Core Rules (Always Required)
-```
-Load: .cursor/rules/isolation_rules/main.mdc
-Load: .cursor/rules/isolation_rules/Core/memory-bank-paths.mdc
-Load: .cursor/rules/isolation_rules/Core/platform-awareness.mdc
-Load: .cursor/rules/isolation_rules/Core/file-verification.mdc
-```
+### Step 3 (if is first time):
+## AUTO PROJECT DISCOVERY (EXECUTION)
 
-### Step 2: Load VAN Mode Map
-```
-Load: .cursor/rules/isolation_rules/visual-maps/van_mode_split/van-mode-map.mdc
-```
+When ALL conditions below are true:
+- memory-bank/ directory exists
+- At least one of the following files is empty:
+  - projectbrief.md
+  - productContext.md
+  - systemPatterns.md
+  - techContext.md
 
-### Step 3: Load Complexity-Specific Rules (Based on Task Analysis)
-After determining complexity level, load:
-- **Level 1:** `.cursor/rules/isolation_rules/Level1/workflow-level1.mdc`
-- **Level 2-4:** Load plan mode rules (transition to PLAN command)
+THEN perform the following actions:
+
+### 1. Analyze Project Codebase
+- Explore repository structure
+- Identify entry points (main.dart, index.js, etc.)
+- Read key files:
+  - pubspec.yaml
+  - package.json
+  - README.md
+  - build.gradle (if exists)
+
+### 2. Infer Project Information
+Determine:
+- Project purpose
+- Core features
+- Technology stack
+- Architecture patterns
+- Key modules and structure
+
+### 3. Populate Memory Bank Files
+
+For each file below, if it is empty → write content:
+
+#### memory-bank/projectbrief.md
+Write:
+- Project overview
+- Main goals
+- Scope
+
+#### memory-bank/productContext.md
+Write:
+- Target users
+- Use cases
+- Product behavior
+
+#### memory-bank/systemPatterns.md
+Write:
+- Architecture pattern
+- Module structure
+- Design decisions
+
+#### memory-bank/techContext.md
+Write:
+- Languages
+- Frameworks
+- Libraries
+- Constraints
+
+### STRICT RULES:
+- Do NOT overwrite non-empty files
+- Do NOT guess — only use evidence from code
+- If unknown → write "Unknown"
+- Keep output concise and structured
+
 
 ## Workflow
 
-1. **Platform Detection**
-   - Detect operating system
-   - Adapt commands for platform
-   - Set path separators
+### Step 1: Read Context
+Read tasks.md → extract: complexity_level, task description, plugin_available.
+Read activeContext.md → extract: affected_files (if any prior work exists).
 
-2. **Memory Bank Verification**
-   - Check if `memory-bank/` directory exists
-   - If not, create Memory Bank structure
-   - Verify essential files exist
+### Step 2: GitNexus Architecture Scan (replaces broad codebase scan)
+Call MCP tool: `list_repos`
+IF unavailable → skip to Step 3, log: "gitnexus_unavailable", proceed with manual scan.
+IF available:
 
-3. **Task Analysis**
-   - Read `memory-bank/tasks.md` if exists
-   - Analyze task requirements
-   - Determine complexity level (1-4)
+  2a. Symbol discovery (replaces Step 3's manual file hunting)
+      Call: `query({query: "<task description keywords>"})`
+      Extract: relevant symbols + file locations → use as files_to_modify draft
+  
+  2b. Dependency mapping (L3-4 only)
+      For each primary symbol from 2a:
+        Call: `context({name: "<symbol>"})`
+        Extract: incoming.calls → blast_radius candidates
+                 outgoing.calls → files that must be understood
+  
+  2c. Pre-plan impact check (L3-4 only)
+      Call: `impact({target: "<primary_symbol>", direction: "upstream", minConfidence: 0.8})`
+      IF Depth 1 non-empty → add to tasks.md as blast_radius
+      IF blast_radius > 5 symbols → upgrade complexity_level by 1
 
-4. **Route Based on Complexity**
-   - **Level 1:** Continue in VAN mode, proceed to implementation
-   - **Level 2-4:** Transition to `/plan` command
+  DO NOT open any file not returned by query results.
 
-5. **Update Memory Bank**
-   - Update `memory-bank/tasks.md` with complexity determination
-   - Update `memory-bank/activeContext.md` with current focus
+### Step 3: Create Plan (write directly to tasks.md)
+Append to tasks.md:
+Implementation Plan
 
-## Usage
+phases: [list]
+files_to_modify: [from GitNexus query — not manual guess]
+blast_radius: [from impact() — L3-4 only, else omit]
+creative_required: [true/false]
+creative_components: [list if true]
 
-Type `/van` followed by your task description or initialization request.
+Checklist
 
-Example:
-```
-/van Initialize project for adding user authentication feature
-```
+ phase 1: ...
+ phase 2: ...
+
+
+L2: 3-5 checklist items, no phases.
+L3: phases with components, flag creative items.
+L4: phased with architecture notes, flag creative + security items.
+
+### Step 4: Technology Validation (L3-4 only)
+Verify dependencies exist. Note conflicts. Max 5 lines in tasks.md.
+
+### Step 5: Route
+- L1 → load `Level1/workflow-level1.mdc` → proceed to /build directly
+- L2-4 → stop here, tell user to run /plan
+
+
+## Hard Rules
+- Plan lives in tasks.md — no separate plan file
+- creative_required field is mandatory
+- L2 plan must fit in <20 lines in tasks.md
+- Do not read progress.md at plan phase — not written yet
+- files_to_modify must come from GitNexus query when available — manual listing is fallback only
 
 ## Next Steps
-
-- **Level 1 tasks:** Proceed directly to `/build` command
-- **Level 2-4 tasks:** Use `/plan` command for detailed planning
-
+- L1 → /build
+- L2-4 → /plan
+  
